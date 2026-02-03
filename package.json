@@ -1,12 +1,12 @@
 {
-	"name": "pptxgenjs",
-	"version": "4.0.1",
+	"name": "xiaobuliukun-pptxgenjs",
+	"version": "4.0.2",
 	"author": {
-		"name": "Brent Ely",
-		"url": "https://github.com/gitbrent/"
+		"name": "xiaobuliukun",
+		"url": "https://github.com/xiaobuliukun/"
 	},
 	"description": "Create JavaScript PowerPoint Presentations",
-	"homepage": "https://gitbrent.github.io/PptxGenJS/",
+	"homepage": "https://github.com/xiaobuliukun/pptxgenjs/",
 	"license": "MIT",
 	"exports": {
 		"types": "./types/index.d.ts",
