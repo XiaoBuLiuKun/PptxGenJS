@@ -195,7 +195,7 @@ export interface GradientStop {
 interface BaseGradientShapeFillProps {
 	/**
 	 * Gradient stops
-	 * - Only used with linearGradient and pathGradient types
+	 * - Only used with linearGradient, radialGradient, and pathGradient types
 	 */
 	stops: GradientStop[]
 	/**
@@ -231,6 +231,36 @@ export interface LinearGradientShapeFillProps extends BaseGradientShapeFillProps
 	 * Fill type
 	 */
 	type: 'linearGradient'
+}
+export interface RadialGradientShapeFillProps extends BaseGradientShapeFillProps {
+	/**
+	 * Gradient path type
+	 * @default 'circle'
+	 */
+	path?: 'circle' | 'rect'
+	/**
+	 * Fill-to-rectangle overrides (percent)
+	 */
+	fillToRect?: { t?: number, r?: number, b?: number, l?: number }
+	/**
+	 * Fill type
+	 */
+	type: 'radialGradient'
+}
+export interface PathGradientShapeFillProps extends BaseGradientShapeFillProps {
+	/**
+	 * Gradient path type
+	 * @default 'shape'
+	 */
+	path?: 'shape' | 'rect' | 'circle'
+	/**
+	 * Fill-to-rectangle overrides (percent)
+	 */
+	fillToRect?: { t?: number, r?: number, b?: number, l?: number }
+	/**
+	 * Fill type
+	 */
+	type: 'pathGradient'
 }
 export interface SolidShapeFillProps {
 	/**
@@ -696,7 +726,7 @@ export interface ShapeProps extends PositionProps, ObjectNameProps {
 	 * @example { color:'0088CC', transparency:50 } // hex color, 50% transparent
 	 * @example { color:pptx.SchemeColor.accent1 } // Theme color Accent1
 	 */
-	fill?: LinearGradientShapeFillProps | SolidShapeFillProps
+	fill?: LinearGradientShapeFillProps | RadialGradientShapeFillProps | PathGradientShapeFillProps | SolidShapeFillProps
 	/**
 	 * Flip shape horizontally?
 	 * @default false
@@ -893,7 +923,7 @@ export interface TableCellProps extends TextBaseProps {
 	 * @example { color:'0088CC', transparency:50 } // hex color, 50% transparent
 	 * @example { color:pptx.SchemeColor.accent1 } // theme color Accent1
 	 */
-	fill?: LinearGradientShapeFillProps | SolidShapeFillProps
+	fill?: LinearGradientShapeFillProps | RadialGradientShapeFillProps | PathGradientShapeFillProps | SolidShapeFillProps
 	hyperlink?: HyperlinkProps
 	/**
 	 * Cell margin (inches)
@@ -971,7 +1001,7 @@ export interface TableProps extends PositionProps, TextBaseProps, ObjectNameProp
 	 * @example { color:'0088CC', transparency:50 } // hex color, 50% transparent
 	 * @example { color:pptx.SchemeColor.accent1 } // theme color Accent1
 	 */
-	fill?: LinearGradientShapeFillProps | SolidShapeFillProps
+	fill?: LinearGradientShapeFillProps | RadialGradientShapeFillProps | PathGradientShapeFillProps | SolidShapeFillProps
 	/**
 	 * Cell margin (inches)
 	 * - affects all table cells, is superceded by cell options
@@ -1078,7 +1108,7 @@ export interface TextPropsOptions extends PositionProps, DataOrPathProps, TextBa
 	 * @example { color:'0088CC', transparency:50 } // hex color, 50% transparent
 	 * @example { color:pptx.SchemeColor.accent1 } // theme color Accent1
 	 */
-	fill?: LinearGradientShapeFillProps | SolidShapeFillProps
+	fill?: LinearGradientShapeFillProps | RadialGradientShapeFillProps | PathGradientShapeFillProps | SolidShapeFillProps
 	/**
 	 * Flip shape horizontally?
 	 * @default false
@@ -1282,7 +1312,7 @@ export interface IChartPropsFillLine {
 	 * @example fill: {color: pptx.SchemeColor.background2} // Theme color value
 	 * @example fill: {transparency: 50} // 50% transparency
 	 */
-	fill?: LinearGradientShapeFillProps | SolidShapeFillProps
+	fill?: LinearGradientShapeFillProps | RadialGradientShapeFillProps | PathGradientShapeFillProps | SolidShapeFillProps
 }
 export interface IChartAreaProps extends IChartPropsFillLine {
 	/**

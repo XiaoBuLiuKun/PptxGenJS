@@ -1000,6 +1000,97 @@ declare namespace PptxGenJS {
 		rotateWithShape?: boolean
 	}
 	// used by: shape, table, text
+	export interface GradientStop {
+		/**
+		 * Position (percent)
+		 * - range: 0-100
+		 */
+		position: number
+		/**
+		 * Gradient stop color
+		 * - `HexColor` or `ThemeColor`
+		 * @example 'FF0000' // hex color (red)
+		 * @example pptx.SchemeColor.text1 // Theme color (Text1)
+		 */
+		color: Color
+		/**
+		 * Transparency (percent)
+		 * - range: 0-100
+		 * @default 0
+		 */
+		transparency?: number
+	}
+	interface BaseGradientShapeFillProps {
+		/**
+		 * Gradient stops
+		 * - Only used with linearGradient, radialGradient, and pathGradient types
+		 */
+		stops: GradientStop[]
+		/**
+		 * Rotate with shape
+		 * @default true
+		 */
+		rotWithShape?: boolean
+		/**
+		 * Tile rectangle
+		 */
+		tileRect?: { t?: number, r?: number, b?: number, l?: number }
+		/**
+		 * Gradient flip direction
+		 * - Only used when tileRect is specified
+		 * @default 'none'
+		 */
+		flip?: 'none' | 'x' | 'xy' | 'y'
+	}
+	export interface LinearGradientShapeFillProps extends BaseGradientShapeFillProps {
+		/**
+		 * Linear gradient angle (degrees)
+		 * - range: 0-359
+		 * @default 0
+		 */
+		angle?: number
+		/**
+		 * Scaled
+		 * - `true` will scale the gradient with the object
+		 * @default false
+		 */
+		scaled?: boolean
+		/**
+		 * Fill type
+		 */
+		type: 'linearGradient'
+	}
+	export interface RadialGradientShapeFillProps extends BaseGradientShapeFillProps {
+		/**
+		 * Gradient path type
+		 * @default 'circle'
+		 */
+		path?: 'circle' | 'rect'
+		/**
+		 * Fill-to-rectangle overrides (percent)
+		 */
+		fillToRect?: { t?: number, r?: number, b?: number, l?: number }
+		/**
+		 * Fill type
+		 */
+		type: 'radialGradient'
+	}
+	export interface PathGradientShapeFillProps extends BaseGradientShapeFillProps {
+		/**
+		 * Gradient path type
+		 * @default 'shape'
+		 */
+		path?: 'shape' | 'rect' | 'circle'
+		/**
+		 * Fill-to-rectangle overrides (percent)
+		 */
+		fillToRect?: { t?: number, r?: number, b?: number, l?: number }
+		/**
+		 * Fill type
+		 */
+		type: 'pathGradient'
+	}
+	export type GradientShapeFillProps = LinearGradientShapeFillProps | RadialGradientShapeFillProps | PathGradientShapeFillProps
 	export interface ShapeFillProps {
 		/**
 		 * Fill color
@@ -1464,7 +1555,7 @@ declare namespace PptxGenJS {
 		 * @example { color:'0088CC', transparency:50 } // hex color, 50% transparent
 		 * @example { color:pptx.SchemeColor.accent1 } // Theme color Accent1
 		 */
-		fill?: ShapeFillProps
+		fill?: ShapeFillProps | GradientShapeFillProps
 		/**
 		 * Flip shape horizontally?
 		 * @default false
@@ -1661,7 +1752,7 @@ declare namespace PptxGenJS {
 		 * @example { color:'0088CC', transparency:50 } // hex color, 50% transparent
 		 * @example { color:pptx.SchemeColor.accent1 } // theme color Accent1
 		 */
-		fill?: ShapeFillProps
+		fill?: ShapeFillProps | GradientShapeFillProps
 		hyperlink?: HyperlinkProps
 		/**
 		 * Cell margin (inches)
@@ -1739,7 +1830,7 @@ declare namespace PptxGenJS {
 		 * @example { color:'0088CC', transparency:50 } // hex color, 50% transparent
 		 * @example { color:pptx.SchemeColor.accent1 } // theme color Accent1
 		 */
-		fill?: ShapeFillProps
+		fill?: ShapeFillProps | GradientShapeFillProps
 		/**
 		 * Cell margin (inches)
 		 * - affects all table cells, is superceded by cell options
@@ -1820,7 +1911,7 @@ declare namespace PptxGenJS {
 		 * @example { color:'0088CC', transparency:50 } // hex color, 50% transparent
 		 * @example { color:pptx.SchemeColor.accent1 } // theme color Accent1
 		 */
-		fill?: ShapeFillProps
+		fill?: ShapeFillProps | GradientShapeFillProps
 		/**
 		 * Flip shape horizontally?
 		 * @default false
@@ -2020,7 +2111,7 @@ declare namespace PptxGenJS {
 		 * @example fill: {color: pptx.SchemeColor.background2} // Theme color value
 		 * @example fill: {transparency: 50} // 50% transparency
 		 */
-		fill?: ShapeFillProps
+		fill?: ShapeFillProps | GradientShapeFillProps
 	}
 	export interface IChartAreaProps extends IChartPropsFillLine {
 		/**

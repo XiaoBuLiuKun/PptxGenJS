@@ -3,7 +3,7 @@
  */
 
 import { EMU, REGEX_HEX_COLOR, DEF_FONT_COLOR, ONEPT, SchemeColor, SCHEME_COLORS } from './core-enums'
-import { PresLayout, TextGlowProps, PresSlide, SolidShapeFillProps, Color, ShapeLineProps, Coord, ShadowProps, LinearGradientShapeFillProps } from './core-interfaces'
+import { PresLayout, TextGlowProps, PresSlide, SolidShapeFillProps, Color, ShapeLineProps, Coord, ShadowProps, LinearGradientShapeFillProps, RadialGradientShapeFillProps, PathGradientShapeFillProps } from './core-interfaces'
 
 /**
  * Translates any type of `x`/`y`/`w`/`h` prop to EMU
@@ -185,14 +185,16 @@ export function createGlowElement (options: TextGlowProps, defaults: TextGlowPro
  * @param {Color | ShapeFillProps | ShapeLineProps} props fill props
  * @returns XML string
  */
-export function genXmlColorSelection (props: Color | SolidShapeFillProps | ShapeLineProps | LinearGradientShapeFillProps): string {
+export function genXmlColorSelection (
+	props: Color | SolidShapeFillProps | ShapeLineProps | LinearGradientShapeFillProps | RadialGradientShapeFillProps | PathGradientShapeFillProps
+): string {
 	if (!props) {
 		return ''
 	}
 
 	let outText = ''
 
-	let safeProps: SolidShapeFillProps | ShapeLineProps | LinearGradientShapeFillProps = {}
+	let safeProps: SolidShapeFillProps | ShapeLineProps | LinearGradientShapeFillProps | RadialGradientShapeFillProps | PathGradientShapeFillProps = {}
 	if (typeof props === 'string') {
 		safeProps.type = 'solid'
 		safeProps.color = props
@@ -257,6 +259,100 @@ export function genXmlColorSelection (props: Color | SolidShapeFillProps | Shape
 				outText += `<a:tileRect ${tAttr} ${rAttr} ${bAttr} ${lAttr}/>`
 			}
 
+			outText += '</a:gradFill>'
+			break
+		}
+		case 'radialGradient': {
+			const stops = safeProps.stops ?? []
+			const rotWithShape = safeProps.rotWithShape ?? true
+			const flip = safeProps.flip ?? 'none'
+			const path = safeProps.path ?? 'circle'
+
+			outText += `<a:gradFill rotWithShape="${rotWithShape ? 1 : 0}" flip="${flip}">`
+
+			if (stops.length > 0) {
+				outText += '<a:gsLst>'
+				outText += stops.map(
+					({ position, color: stopColor, transparency }) => {
+						const stopInternalElements = transparency
+							? `<a:alpha val="${Math.round((100 - transparency) * 1000)}"/>`
+							: ''
+
+						return `<a:gs pos="${position * 1000}">${createColorElement(stopColor, stopInternalElements)}</a:gs>`
+					}
+				).join('')
+				outText += '</a:gsLst>'
+			}
+
+			outText += `<a:path path="${path}">`
+
+			if (
+				safeProps.fillToRect &&
+				(
+					safeProps.fillToRect.t ||
+					safeProps.fillToRect.r ||
+					safeProps.fillToRect.b ||
+					safeProps.fillToRect.l
+				)
+			) {
+				const tAttr = safeProps.fillToRect.t ? `t="${safeProps.fillToRect.t * 1000}"` : ''
+				const rAttr = safeProps.fillToRect.r ? `r="${safeProps.fillToRect.r * 1000}"` : ''
+				const bAttr = safeProps.fillToRect.b ? `b="${safeProps.fillToRect.b * 1000}"` : ''
+				const lAttr = safeProps.fillToRect.l ? `l="${safeProps.fillToRect.l * 1000}"` : ''
+
+				outText += `<a:fillToRect ${tAttr} ${rAttr} ${bAttr} ${lAttr}/>`
+			} else {
+				outText += '<a:fillToRect/>'
+			}
+
+			outText += '</a:path>'
+			outText += '</a:gradFill>'
+			break
+		}
+		case 'pathGradient': {
+			const stops = safeProps.stops ?? []
+			const rotWithShape = safeProps.rotWithShape ?? true
+			const flip = safeProps.flip ?? 'none'
+			const path = safeProps.path ?? 'shape'
+
+			outText += `<a:gradFill rotWithShape="${rotWithShape ? 1 : 0}" flip="${flip}">`
+
+			if (stops.length > 0) {
+				outText += '<a:gsLst>'
+				outText += stops.map(
+					({ position, color: stopColor, transparency }) => {
+						const stopInternalElements = transparency
+							? `<a:alpha val="${Math.round((100 - transparency) * 1000)}"/>`
+							: ''
+
+						return `<a:gs pos="${position * 1000}">${createColorElement(stopColor, stopInternalElements)}</a:gs>`
+					}
+				).join('')
+				outText += '</a:gsLst>'
+			}
+
+			outText += `<a:path path="${path}">`
+
+			if (
+				safeProps.fillToRect &&
+				(
+					safeProps.fillToRect.t ||
+					safeProps.fillToRect.r ||
+					safeProps.fillToRect.b ||
+					safeProps.fillToRect.l
+				)
+			) {
+				const tAttr = safeProps.fillToRect.t ? `t="${safeProps.fillToRect.t * 1000}"` : ''
+				const rAttr = safeProps.fillToRect.r ? `r="${safeProps.fillToRect.r * 1000}"` : ''
+				const bAttr = safeProps.fillToRect.b ? `b="${safeProps.fillToRect.b * 1000}"` : ''
+				const lAttr = safeProps.fillToRect.l ? `l="${safeProps.fillToRect.l * 1000}"` : ''
+
+				outText += `<a:fillToRect ${tAttr} ${rAttr} ${bAttr} ${lAttr}/>`
+			} else {
+				outText += '<a:fillToRect/>'
+			}
+
+			outText += '</a:path>'
 			outText += '</a:gradFill>'
 			break
 		}
